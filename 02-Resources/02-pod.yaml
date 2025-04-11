@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: nginx
+#  labels:
+#    namespace: expense    # if we do not give namespace, resource will goto default namespace
+spec:
+  containers:
+  # the below container is equivalent to docker run -d --name nginx-container nginx
+  - name: nginx-container
+    image: nginx
+
