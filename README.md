@@ -124,8 +124,64 @@ spot instances -> 90% discount. When AWS requires this unused capacity to on dem
 
 We can't run production work loads in spot instances. We may run dev/testing purpose work loads in spot instances.
 
+After creating the cluster , to see list of nodes or to see howmnay nodes are there in cluster
+```
+kubectl get nodes
+```
 
+Syntax in k8s:
 
+apiVersion:
+kind: 
+metadata:
+  name:
+  labels:
+spec:
+
+This is general/overall sysntax in k8s manifest file. It changes slightly based on the reosurce we are creating.
+
+### Resources
+
+Namesapaces: Just like vpc we will have a dedicated isolated project to create our workloads / resources. Its a isolated project work space in the cluster.
+The resources in one name space cant be accessed by resources in another work space.
+
+After creating a resource yaml file, we can apply it in ec2 instance using kubectl apply command
+```
+kubectl apply -f <reosurce-file-name.yaml>
+```
+To delete the above resource
+```
+kubectl delete -f <reosurce-file-name.yaml>
+```
+
+To list the namespace in k8s
+```
+kubectl get namespaces
+```
+
+pod: pod is a smallest deployable unit/resource in k8s. Pod can contain one or many containers.
+
+pod vs container:
+
+1. pod is smallest deployable unit in k8s
+2. pod can contain one/many containers
+3. containers in  a pod can share same network identity i.e. All the container share same IP, port and also storage
+4. these are useful in sidecar and proxy patterns
+
+Assume we have nginx container in a pod. Nginx writes logs to /var/log/nginx directory in container. When the container is deleted, we lost the logs.
+Hence in k8s we write logs to elastic search.
+
+To go inside the pod:
+```
+kubectl exec -it <pod-name> -- bash
+```
+When a pod is having multiple containers, To go inside a specific container, the command is
+```
+kubectl exec -it <pod-name> -c <container-name> -- bash
+```
+
+A Pod can't contain two containers with same name. Container names should be different in a pod.
+But pod1 has nginx container. And pod2 can have the same container name (nginx) of other pod pod1.
 
 
 
