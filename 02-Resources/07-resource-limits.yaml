@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-limits-example
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests: # soft limit - used while starting container
+        cpu: 100m
+        memory: 68Mi
+      limits: # hard limit - used while running
+        cpu: 120m
+        memory: 120Mi

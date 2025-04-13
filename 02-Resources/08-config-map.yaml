@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-example
+data:
+  person_name: suresh
+  course_name: "k8s"
+
+
+# to see config map $ kubectl get configmap
