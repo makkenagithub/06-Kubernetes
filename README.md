@@ -266,8 +266,8 @@ Pod to pod communications can happen. Get the IP of a pod by describing it. Then
 In VMs we used route53 resords to overcome this IP changes. Everytime IP changes, we update route53 records and then access with DNS. But in k8s we have services.
 
 Services are 3 types in k8s.
-1. cluster IP - its a default service
-2. node port
+1. cluster IP - its a default service. Its for internal pod to pod communication
+2. node port - open a port on underlying node(host) (worker node)
 3. load balancer
 
 When we create a service, based on the selectors given in the service, that service will go and attach to that pod. 
@@ -305,6 +305,26 @@ spec:
     port: 80
     targetPort: http-web-svc
 ```
+To get services
+```
+kubectl get services
+```
+To know , on which worker node , pords are running
+```
+kubectl get pods -o wide
+```
+After creating a node-port servie, k8s allots a port number from range 30000 to 32767 to the all worker nodes. But we need to open the inbound rule for that port from any one worker node.
+Once we open the port say 32276 from a worker node, then that port will automatically opens that port for other worker nodes also. Its the responsibility of k8s. Because the pod can run on any of the worker node.
+
+When we create a node-port service, it also opens cluster IP also, (see with kubectl get services command). So cluster-IP is subset of node-port
+
+When we create a load balancer service, it opens a node-port  range 30000 to 32767 also. Directly with the lb url, we are able to access. Node-port is subset of lb service. cluster-IP is subset of Node-port.
+
+If we want a specific node port to open, then we can add below filed in the manifest
+```
+nodePort: 31200
+```
+
 
 
 
