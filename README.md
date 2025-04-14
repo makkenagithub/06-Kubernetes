@@ -236,7 +236,75 @@ We can refer each key from a config map as env variabele, or we can also refer e
 
 configmap is for non-confidential information.
 
+#### Secret:
+Its similar to config maps, but we can use for confidential info, like passwords. We need to put encoded values in manifest
 
+We need to encode the confidential things and then write to manifest file.
+Encode with base64 as below
+```
+echo "username" | base64
+echo "password" | base64
+```
+To decode
+```
+echo "c3VyZXNoCg==" | base64 --decode
+```
+
+We create secrets with type Opaque in manifest files. TO see list of secrets
+```
+kubectl get secrets
+kubectl describe secret <secret-name>
+```
+But this kind of encoding/decoding is not used in real time , as others can easily decode the secrets. So in realtime  we use encryption by using aws secret manager / aws ssm paramstore
+
+HOW we can access the pod externally by using internet ? In DOcker we have host port and container port. But how in k8s?
+
+Ans: By exposing to services.
+
+#### Services:
+Pod to pod communications can happen. Get the IP of a pod by describing it. Then go inside a pod and curl that IP, it will be accessable. But POD IPs are ephemeral (temporary).
+In VMs we used route53 resords to overcome this IP changes. Everytime IP changes, we update route53 records and then access with DNS. But in k8s we have services.
+
+Services are 3 types in k8s.
+1. cluster IP - its a default service
+2. node port
+3. load balancer
+
+When we create a service, based on the selectors given in the service, that service will go and attach to that pod. 
+When we create pods, we give labels to it. The services attach to the pods by using selectors.
+
+Service will have a port.
+
+service example: https://kubernetes.io/docs/concepts/services-networking/service/
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app.kubernetes.io/name: proxy
+spec:
+  containers:
+  - name: nginx
+    image: nginx:stable
+    ports:
+      - containerPort: 80
+        name: http-web-svc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app.kubernetes.io/name: proxy
+  ports:
+  - name: name-of-service-port
+    protocol: TCP
+    port: 80
+    targetPort: http-web-svc
+```
 
 
 
