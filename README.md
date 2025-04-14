@@ -158,14 +158,14 @@ To list the namespace in k8s
 ```
 kubectl get namespaces
 ```
-
+#### pod
 pod: pod is a smallest deployable unit/resource in k8s. Pod can contain one or many containers.
 
 pod vs container:
 
 1. pod is smallest deployable unit in k8s
 2. pod can contain one/many containers
-3. containers in  a pod can share same network identity i.e. All the container share same IP, port and also storage
+3. all containers in  a pod can share same network identity i.e. All the container share same IP, port and also storage
 4. these are useful in sidecar and proxy patterns
 
 Assume we have nginx container in a pod. Nginx writes logs to /var/log/nginx directory in container. When the container is deleted, we lost the logs.
@@ -182,6 +182,66 @@ kubectl exec -it <pod-name> -c <container-name> -- bash
 
 A Pod can't contain two containers with same name. Container names should be different in a pod.
 But pod1 has nginx container. And pod2 can have the same container name (nginx) of other pod pod1.
+
+TO see full info about a pod
+```
+kubectl describe pod <pod-name>
+docker inspect <container-name/id>
+```
+
+#### Annotations:
+
+Labels are used for k8s internal resource selctors. Annotations are used for external resource selectors. We can use special chars, URLs in annotations, but not in labels.
+
+ENV in Docker image file vs ENV in k8s manifest file:
+
+1. If any change made in ENV in docker, we need to rebuild the image and then need to restart (delete and apply) the manifest in k8s.
+2. If any change made in ENV in k8s manifest file, then only restart (delete and apply manifest file) is enough
+
+env in k8s manifest file is a list of key value pairs.We can see the env value by going insdie the pod and type env and press enetr and see env variables in the pod.
+
+#### Resource utilisation in K8s and Docker:
+
+In docker assume 5 containers are running in a host. Due to some code issue in one container, say memory leak, this one container can start consuming more memory and due to that other containers can stop working due to low memory.
+
+In k8s we can acllocate resource softlimit, hardlimit.
+
+softlimit (request) :- (100m, 64Mi) is used when the pod/container is getting started.
+
+hardlimit (limit): (120m, 128Mi) is used when pod/container is running. Pod can use this limit as max values when running.
+
+1 cpu = 1000 milli core cpu.
+
+We have pod resoruce limits and container resource limits in k8s. https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+
+If the hard limit also crosses while running the container, then OOM (out of memory error comes)
+
+#### Config-map as env variable
+configmap is also similar to env variable. which can be used as variable in the code
+To see the config maps
+```
+kubectl get configmap
+kubectl describe configmap <configmap-name>
+```
+
+When a config map is created and its used by some pod. Then assume pod is running. Now we can make changes to config map without touching the pod manifest file and the change will reflect in the pod after restarting the pod
+```
+kubectl edit configmap <config-map-name>
+kubectl delete -f <pod-file-name>
+kubectl apply -f <pod-file-name>
+```
+vi editor will open for the above edit command and make the changes. The changes key value reflects in the pod after restarting pod.
+
+We can refer each key from a config map as env variabele, or we can also refer entire config map as env variable.
+
+configmap is for non-confidential information.
+
+
+
+
+
+
+
 
 
 
