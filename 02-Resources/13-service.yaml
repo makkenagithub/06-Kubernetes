@@ -12,3 +12,5 @@ spec:
     port: 80  # this is service port
     protocol: TCP
     targetPort: 80  # this is container port. We can give name also here, but that name to be defined in pod container ports
+
+# this default service - clusterIP service
