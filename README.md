@@ -115,6 +115,10 @@ eksctl create cluster -f cluster.yaml
 or
 eksctl create cluster --config-file=cluster.yaml
 ```
+To delete the cluster
+```
+eksctl delete cluster --config-file=cluster.yaml
+```
 
 spot instances:
 
