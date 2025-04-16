@@ -329,7 +329,19 @@ If we want a specific node port to open, then we can add below filed in the mani
 nodePort: 31200
 ```
 
+Services are used for pod to pod communication using dns and also load balancing purpose. Expose the pod using service to access from internet.
 
+
+#### Sets:
+1. ReplicaSet
+2. DeploymentSet
+3. DaemonSet
+4. StatefulSet
+
+Replicaset make sure our desired number of pods running all the time. Replica set exists in apiVersion apps/v1
+
+Once we create a replica set and attach it to pods, then if we modify the replica set with the updated image version, and then apply this replica set with (kubectl apply -f replica-set.yaml). 
+it wont change the pods with new image verion. So replicaset can't update image version, its only responsibility is to maintain desired number of replicas.
 
 
 
