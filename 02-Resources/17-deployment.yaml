@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-example
+  labels:
+    app: nginx 
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.1
+      
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: service-example
+spec:
+  selctor:
+      app: nginx 
+      tier: frontend
+  ports:
+  - name: service-port
+    port: 80
+    protocol: TCP
+    targetPort: 80
