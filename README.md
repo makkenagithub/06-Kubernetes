@@ -341,7 +341,48 @@ Services are used for pod to pod communication using dns and also load balancing
 Replicaset make sure our desired number of pods running all the time. Replica set exists in apiVersion apps/v1
 
 Once we create a replica set and attach it to pods, then if we modify the replica set with the updated image version, and then apply this replica set with (kubectl apply -f replica-set.yaml). 
-it wont change the pods with new image verion. So replicaset can't update image version, its only responsibility is to maintain desired number of replicas.
+it wont change the pods with new image verion. So replicaset can't update image version, its only responsibility is to maintain desired number of replicas. 
+So the disadvantage of replicaset is , it wont update if the image version updates are there. we can overcome this with deployment.
+
+To see replicaset
+```
+kubectl get replicaset
+```
+To delete the replica set
+```
+kubectl delete -f <replicaset.yaml>
+```
+
+TO get/delete the deployments
+```
+kubectl get deployment
+kubectl get pods
+kubectl delete deployment <deployment-name>
+```
+Deployment will create replicaset. So replica set is part/subset of deployment. Replica set creates pods.
+After applying deployment.yaml, see the pods and observer pod names.
+
+Change the image version and apply the deployment file. Pods will be updated with new image version. Replicaset also gets updated.
+So when we change the image version, Deployment will create new replicaset, and creates new pods in the new replica set and deleted the pods in old replicaset.
+
+Pod is subset of replicaset. Replicaset subset of deployment. 
+We use deployments in projects.
+
+To get pods in a particular namespace and go inside it
+```
+kubectl get pods -n <namespace>
+kubectl exec -it <pod-name> -n <namespace> -- bash
+```
+To get services
+```
+kubectl get services -n <namespace>
+```
+Its always better give app configuration variables during run time i.e. in manifest file. Just by deploying the manifest, app configs come into effect.
+But If we give in docker file, we need to rebuild the docker image and then deploy the manifest.
+
+
+
+
 
 
 
