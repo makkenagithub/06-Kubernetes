@@ -4,7 +4,7 @@ metadata:
   name: node-port-example
 spec:
   type: NodePort
-  selectors:
+  selector:
     project: expense
     environment: dev
     module: backend

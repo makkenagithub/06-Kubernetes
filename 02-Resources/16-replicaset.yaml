@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replicaset-example
+  labels:   # these are replica set labels
+    app: nginx
+    tier: frontend
+spec:
+  replicas: 3   # which pods need to run as 3 replicas? is decided through selectors. In k8s, if any resource wants to attch to another resource, it uses selectors
+  selector: # labels mentioned here are used to select the pod to create replicas
+    matchLabels:
+      app: nginx
+      tier: frontend
+  # the below thing is to define the pod, if the pod labels match the selector labels, then it creates replica set
+  template: 
+    metadata:
+      # name: nginx-pod   If we give pod name , here it throws error, as 3 replicas try to give same pod name. So we can't choose pod name while giving replica set
+      # pods are names with the name of replica set followed by some random letters.
+      labels:   # pod labels
+        app: nginx
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+
+
+# To attach a service to above replica set, then we can attach using service as below
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-example
+spec:
+  selector: # give the pod lables here to select them
+    app: nginx
+    tier: frontend
+  ports:
+  - name: service-port
+    port: 80  # this is service port
+    protocol: TCP
+    targetPort: 80

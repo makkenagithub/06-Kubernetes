@@ -4,7 +4,7 @@ metadata:
   name: lb-example
 spec:
   type: LoadBalancer
-  selectors:
+  selector:
     project: expense
     environment: dev
     module: backend
