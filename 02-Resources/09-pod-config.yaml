@@ -6,15 +6,15 @@ spec:
   containers:
   - name: nginx
     image: nginx
-  env:
+    env:
     # define env variables and get value from config-map
-    - name: PERSON-NAME
-      valueFrom:
-        configMapKeyRef:
-          name: config-map-example  # name of the configmap
-          key: person_name   # it gets value from key 'person_name' in the configmap. Finally its PERSON-NAME=suresh
-    - name: COURSE-NAME
-      valueFrom:
-        configMapKeyRef:
-          name: config-map-example  # name of the configmap
-          key: course_name  # it gets value from key 'course_name' in the configmap. Finally its COURSE-NAME=k8s
+      - name: PERSON-NAME
+        valueFrom:
+          configMapKeyRef:
+            name: config-map-example  # name of the configmap
+            key: person_name   # it gets value from key 'person_name' in the configmap. Finally its PERSON-NAME=suresh
+      - name: COURSE-NAME
+        valueFrom:
+          configMapKeyRef:
+            name: config-map-example  # name of the configmap
+            key: course_name  # it gets value from key 'course_name' in the configmap. Finally its COURSE-NAME=k8s

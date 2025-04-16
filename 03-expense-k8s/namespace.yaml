@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: expense   # name of the Namespace
+  labels:
+    project: expense
+    environment: dev
+
+# create this namespace file and apply it with $kubectl apply -f namespace.yaml
