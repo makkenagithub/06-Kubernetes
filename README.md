@@ -380,7 +380,19 @@ kubectl get services -n <namespace>
 Its always better give app configuration variables during run time i.e. in manifest file. Just by deploying the manifest, app configs come into effect.
 But If we give in docker file, we need to rebuild the docker image and then deploy the manifest.
 
+TO see the logs
+```
+kubectl logs <pod-name> -n <namespace>
+```
+Everytime we need to give namespace explicitly. We can instal kubectx and set the namespace. https://github.com/ahmetb/kubectx
+```
+sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
+sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
+kubens <namespace>
+```
 
+In minimum size images, we may not find all commands (such as telnet, curl etc) inside the pod. For this purpose we can create a debug docker image and run that debug pod to troubleshoot issues.
 
 
 
