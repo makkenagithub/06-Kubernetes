@@ -18,7 +18,7 @@ metadata:
     tier: api
     project: expense
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:    # databases we usually do using statefull sets.
       app: backend
@@ -36,7 +36,7 @@ spec:
         image: suresh/backend:v1
         envFrom:
         - configMapRef:
-          name: backend
+            name: backend
 
 ---
 

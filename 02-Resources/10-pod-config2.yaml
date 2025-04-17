@@ -8,7 +8,7 @@ spec:
     image: nginx
     envFrom:      # instead of refering each key from a config map, we can refer entire config map to envronment variables here.
       - configMapRef:
-        name: config-map-example
+          name: config-map-example
 
 
 
