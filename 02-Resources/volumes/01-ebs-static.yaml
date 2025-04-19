@@ -31,7 +31,11 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: pod-using-pvc
+  labels:
+    purpose: ebs-static
 spec:
+  nodeSelector:
+    topology.kubernetes.io/zone: us-east-1d
   containers:
   - name: nginx
     image: nginx
@@ -42,3 +46,24 @@ spec:
   - name: ebs-pod-claim   # this volume comes from pvc given below
     persistentVolumeClaim:
       claimName: ebs-static-claim      
+
+---
+apiVersion: v1 
+kind: Service
+metadata:
+  name: lb-example
+spec:
+  type: LoadBalancer
+  selector:
+    purpose: ebs-static
+  ports:
+  - name: service-port
+    port: 80
+    targetPort: 80
+    protocol: TCP
+    # we can give specific node-port also. Then open this port in nodes security groups, to access nginx from outside
+    nodePort: 30007
+
+
+# whatevr data stored in the volume mount path /usr/share/nginx/html will be stored to PVC.
+# if we delete the pod and then create the pod again, then the data in the path /usr/share/nginx/html will exist in new pod.          
