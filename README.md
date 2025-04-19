@@ -406,14 +406,97 @@ telnet <pod-name(mysql)> <port(3306)>
 Generally data bases are not placed into kubernetes pods. But if we want to put DBs into k8s, we have a concept called statefull sets.
 
 
+#### Volumes:
+In k8s everything is ephemeral. Pods are ephemeral, worker nodes are ephemeral. EKS cluster itself is ephemeral.
 
+So its better to store data outside of cluster, so that data will be safe. We have 2 options in AWS.
+1. elastic block storage - EBS (just like hard disk)
+2. elastic file storage - EFS (just like google drive / onedrive)
 
+We create the volumes out side and mount them with cluster. If the cluster is deleted and new cluster come, we can mount the volumes to new cluster.
+1. static provisioning
+2. dynamic provisioning
 
+EBS static provisioning: 
+1. we need creat e the volumes
+2. we need to install the drivers
+3. EKS nodes should have permissions to access EBS volumes.
 
+The data center (us-east-1b) in which worker nodes are running, there only EBS volumes should be created. 
+For eg, if few nodes are running in us-east-1b and few nodes in us-east-1d, then EBS volumes should be created in either us-east-1b or us-east-1d.
 
+Assume EBS volume is creates in us-east-1d. We created a pod with pvc attached to it. And when we run that pod manifest file, if the pod tries to create container in a node which 
+is in us-east-1b, then container will not create, it gives error in log files, stating , could not attach volume to node, invalid volume zone mismatch.
 
+1.EC2-> volumes-> create volume in AWS console.
 
+2.then install drivers EBS CSI driver in master/workstation server, run below command  https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/master/docs/install.md
+```
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.42"
+```
+Then see the pods in kube-system administration name space and observe csi related pods.
+```
+kubectl get pods -n kube-system
+```
+3.Select any one worker node in AWS console, then click on the Role -> Add permissions -> attach policies -> select AmazonEBSCSIDriverpolicy -> add permission
 
+with this 3 steps are completed for EBS static provisioning
+
+##### Persistent Volume (PV) and Persistent volume claim (PVC):
+k8s creates a wrapper object to manage underlying volumes. Because k8s engineers wont have full idea on volumes.
+
+PV - it represents  physical storage like EBS/EFS.
+
+Access Modes (https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) : ReadWriteOnce, ReadOnlyMnay, ReadWriteMany
+
+EBS volumes can be accessed by only one node at a time similar to hard disk. So the access mode is ReadWriteOnce
+
+EBS PV: It is equivalent k8s object of EBS created in aws
+```
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ebs-static
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 20Gi
+  csi:
+    driver: ebs.csi.aws.com
+    fsType: ext4
+    volumeHandle: {EBS volume ID} # get volume id from aws console
+
+```
+Reclain Policy: 
+
+Retain - If the pvc is deleted data wont be deleted, data is retained.
+
+Delete - If the PV/pvc is deleted, then disk also deleted. Data will be deleted.
+
+Recycle (depricated) - In this data is deleted, but disk is not deleted.
+
+To se PVs
+```
+kubectl get pv
+```
+
+Pod should claim PV to access that.
+
+PVC:
+
+To get pvc
+```
+kubectl get pvc
+```
+if the status of pvc is bound means, pvc is attched to pv.
+
+PV is the physical representation of the storage. It represents the wraper object, that represents the external storage.
+PVC containes the pv information. Pod gets the storage through pvc
+
+Assume EBS volume is creates in us-east-1d. We created a pod with pvc attached to it. And when we run that pod manifest file, if the pod tries to create container in a node which 
+is in us-east-1b, then container will not create, it gives error in log files, stating , could not attach volume to node, invalid volume zone mismatch.
+To make sure the pod is created in a node which is in us-east-1d, we can use nodeSelectors.
 
 
 
