@@ -418,7 +418,7 @@ We create the volumes out side and mount them with cluster. If the cluster is de
 2. dynamic provisioning
 
 EBS static provisioning: 
-1. we need creat e the volumes
+1. we need to create the volumes
 2. we need to install the drivers
 3. EKS nodes should have permissions to access EBS volumes.
 
@@ -492,11 +492,26 @@ kubectl get pvc
 if the status of pvc is bound means, pvc is attched to pv.
 
 PV is the physical representation of the storage. It represents the wraper object, that represents the external storage.
-PVC containes the pv information. Pod gets the storage through pvc
+PVC contains the pv information. Pod gets the storage through pvc
 
 Assume EBS volume is creates in us-east-1d. We created a pod with pvc attached to it. And when we run that pod manifest file, if the pod tries to create container in a node which 
 is in us-east-1b, then container will not create, it gives error in log files, stating , could not attach volume to node, invalid volume zone mismatch.
+So this is availability zone mismatch for volume and pod.
+
 To make sure the pod is created in a node which is in us-east-1d, we can use nodeSelectors.
 
+Describe that pod to see the above error
+```
+kubectl describe pod <pod-name>
+```
+NodeSelectors: See the labels of nodes with below command. It shows lot of labels for nodes.
+```
+kubectl get nodes --show-labels
+```
+Add the label which is relevant to node's availability zone in spec of manifest file. So the pod will be placed to the nodes which are in availability zone us-east-1d
+```
+nodeSelector:
+  topology.kubernetes.io/zone: us-east-1d
+```
 
 
