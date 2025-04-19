@@ -394,6 +394,16 @@ kubens <namespace>
 
 In minimum size images, we may not find all commands (such as telnet, curl etc) inside the pod. For this purpose we can create a debug docker image and run that debug pod to troubleshoot issues.
 
+If we want to run a shell script available in githud then
+```
+curl <github-url-of-script> | sudo bash
+```
+Create the debug pod with the same namespace as project. We can go inside the debug pod and check the telnet of other pods of the project such as backend/mysql/frontend etc.
+```
+telnet <pod-name(mysql)> <port(3306)>
+```
+
+Generally data bases are not placed into kubernetes pods. But if we want to put DBs into k8s, we have a concept called statefull sets.
 
 
 
